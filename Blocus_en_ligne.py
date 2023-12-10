@@ -1,8 +1,9 @@
+#Initialisation des librairies
 import asyncio
 import time
 import colored
 
-#creer des pieces
+#creation des pieces
 piece=[
       [[1]],
       [[1],[1]],
@@ -27,19 +28,17 @@ piece=[
       [[0,1,0],[1,1,1],[0,1,0]]
       ]
 
+#Initialisation du message d'erreur et des couleurs
 erreur = ""
-
 couleur = {"#": 'sky_blue_3', "%": 'gold_3b', "&": 'light_green_2', "$": 'light_pink_3'}
 
 def effaceEcran ():
+    """Vide l'affichage de la console"""
     for i in range (1,100) :
         print("\n")
 
-
-# Initialise la grille
-
 def initGrille (grille) :
-           
+    """Initialise la grille"""       
     for colonne in range (22) :
         grille[0][colonne]='*'
         grille[21][colonne]='*'
@@ -51,6 +50,7 @@ def initGrille (grille) :
 
        
 def affiche_piece(dispo, lejoueur):
+    """Affiche les pieces disponibles du joueur actuel"""
     print()
     n = len(dispo)//7
     if len(dispo)%7 != 0:
@@ -145,6 +145,7 @@ def placement_piece(y,x,lapiece, grille, lejoueur, tour):
    
    
 def rotation_piece(num_piece, Rotation):
+    """Tourne la piece"""
     if Rotation == 'G':
         piece[num_piece] = [[piece[num_piece][j][i] for j in range(len(piece[num_piece]))] for i in range(len(piece[num_piece][0])-1,-1,-1)]
     if Rotation == 'D':
@@ -163,6 +164,7 @@ def calcul_resutat(pieces):
    
 
 def fin_de_partie(resultat, moi):
+    """Affiche le résultat de la partie"""
     print("\nRésultat : ")
     vainqueur = '#'
     for key, value in resultat.items():
@@ -178,6 +180,7 @@ def fin_de_partie(resultat, moi):
 
 
 def afficheGrille (grille) :
+    """Affiche la grille"""
     lettreM=" ABCDEFGHIJKLMNOPQRSTU"
     lettrem=" abcdefghijklmnopqrstu"
     print(end="  ")
@@ -201,15 +204,13 @@ def afficheGrille (grille) :
 role = ""   
         
 async def handle_client(reader, writer):
+    global erreur
 
     #Initialise le plateau, les joueurs, leurs pieces et le tour
     grille= [[' ' for i in range(22)] for j in range(22)]
-    # grille qui pourra contenir
-    # 3 sortes de caractères : '*' ou 'O' ou le caractere espace ' '
+    initGrille (grille)
 
     motifs = "#%&$"
-
-    initGrille (grille)
 
     #Les listes de piece des 4 joueurs
     joueurs = [[i for i in range(21)] for i in range(4)]
@@ -251,11 +252,22 @@ async def handle_client(reader, writer):
                             if placement_piece(y, x, piece[choix], grille, motifs[J], tour):
                                 joueurs[J].remove(choix)
 
+
                                 if tour == 21:
+                                    #Si on est au dernier tour, change le score du joueur
                                     if choix == 0:
                                         resultat[motifs[J]] = 20
                                     else:
                                         resultat[motifs[J]] = 15
+
+                                    #Passe à la seconde couleur du joueur
+                                    if motifs[J] in moi:
+                                        if nextMoi == moi[0]:
+                                            nextMoi = moi[1]
+                                        else:
+                                            nextMoi = moi[0]
+
+                                    #Supprime le joueurs de la liste
                                     joueurs.pop(J)
                                     motifs = motifs[:J] + motifs[J + 1:]
                                     if len(joueurs) == 0:
@@ -266,6 +278,7 @@ async def handle_client(reader, writer):
                                         break
 
                                 else:
+                                    #Passe à la seconde couleur du joueur
                                     if motifs[J] in moi:
                                         if nextMoi == moi[0] and moi[1] in motifs:
                                             nextMoi = moi[1]
@@ -309,7 +322,10 @@ async def handle_client(reader, writer):
         print("Tour " + str(tour))
         print("Joueur " + colored.fore(couleur[moi[0]]) + moi[0] + colored.fore('white') + " et " + colored.fore(couleur[moi[1]]) + moi[1] + colored.fore('white') + "\n")
         afficheGrille(grille)
-        print(erreur)
+        if motifs[J] in moi:
+            print(erreur)
+        else:
+            print()
 
         #affiche l'ensemble des pièces du joueur si le joueur peut encore jouer.
         try:
@@ -366,6 +382,7 @@ async def main_client():
     await writer.wait_closed()
 
 def main():
+    global role
     role = input("Etes vous le serveur (O ou N) ? : ")
     
     if role == "O":
