@@ -251,7 +251,7 @@ async def handle_client(reader, writer):
                             if placement_piece(y, x, piece[choix], grille, motifs[J], tour):
                                 joueurs[J].remove(choix)
 
-                                if tour == 3:
+                                if tour == 21:
                                     if choix == 0:
                                         resultat[motifs[J]] = 20
                                     else:
