@@ -1,7 +1,8 @@
+#Initialisation des librairies
 import time
 import colored
 
-#creer des pieces
+#creation des pieces
 piece=[
       [[1]],
       [[1],[1]],
@@ -26,20 +27,17 @@ piece=[
       [[0,1,0],[1,1,1],[0,1,0]]
       ]
 
+#Initialisation du message d'erreur et des couleurs
 erreur = ""
-
 couleur = {"#": 'sky_blue_3', "%": 'gold_3b', "&": 'light_green_2', "$": 'light_pink_3'}
 
-
 def effaceEcran ():
+    """Vide l'affichage de la console"""
     for i in range (1,100) :
         print("\n")
 
-
-# Initialise la grille
-
 def initGrille (grille) :
-           
+    """Initialise la grille"""       
     for colonne in range (22) :
         grille[0][colonne]='*'
         grille[21][colonne]='*'
@@ -51,6 +49,7 @@ def initGrille (grille) :
 
        
 def affiche_piece(dispo, lejoueur):
+    """Affiche les pieces disponibles du joueur actuel"""
     print()
     n = len(dispo)//7
     if len(dispo)%7 != 0:
@@ -145,6 +144,7 @@ def placement_piece(y,x,lapiece, grille, lejoueur, tour):
    
    
 def rotation_piece(num_piece, Rotation):
+    """Tourne la piece"""
     if Rotation == 'G':
         piece[num_piece] = [[piece[num_piece][j][i] for j in range(len(piece[num_piece]))] for i in range(len(piece[num_piece][0])-1,-1,-1)]
     if Rotation == 'D':
@@ -162,18 +162,24 @@ def calcul_resutat(pieces):
     return points
    
 
-def fin_de_partie(resultat):
+def fin_de_partie(resultat, moi):
+    """Affiche le résultat de la partie"""
     print("\nRésultat : ")
     vainqueur = '#'
     for key, value in resultat.items():
         print(f"Joueur {key} : {value} points")
         if value > resultat[vainqueur]:
             vainqueur = key
-    print(f"\n Le joueur {vainqueur} à gagner !\n")
+            
+    if vainqueur == moi:
+        print("\n Vous avez gagner !\n")
+    else:
+        print(f"\n Le joueur {vainqueur} à gagner !\n")
    
 
 
 def afficheGrille (grille) :
+    """Affiche la grille"""
     lettreM=" ABCDEFGHIJKLMNOPQRSTU"
     lettrem=" abcdefghijklmnopqrstu"
     print(end="  ")
@@ -197,15 +203,13 @@ def afficheGrille (grille) :
 ##################################
 
 def main():
+    global erreur
        
     #Initialise le plateau, les joueurs, leurs pieces et le tour
     grille= [[' ' for i in range(22)] for j in range(22)]
-    # grille qui pourra contenir
-    # 3 sortes de caractères : '*' ou 'O' ou le caractere espace ' '
+    initGrille (grille)
     
     motifs = "#%&$"
-    
-    initGrille (grille)
     
     #Les listes de piece des 4 joueurs
     joueurs = [[i for i in range(21)] for i in range(4)]
