@@ -311,7 +311,7 @@ async def handle_client(reader, writer):
                 joueurs.pop(J)
                 if len(joueurs) == 0:
                     fin_de_partie(resultat, moi)
-                    break
+                    return 0
                 elif J >= len(joueurs):
                     tour += 1
                     J = 0
