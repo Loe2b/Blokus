@@ -162,7 +162,7 @@ def calcul_resutat(pieces):
     return points
    
 
-def fin_de_partie(resultat, moi):
+def fin_de_partie(resultat):
     """Affiche le résultat de la partie"""
     print("\nRésultat : ")
     vainqueur = '#'
@@ -171,10 +171,7 @@ def fin_de_partie(resultat, moi):
         if value > resultat[vainqueur]:
             vainqueur = key
             
-    if vainqueur == moi:
-        print("\n Vous avez gagner !\n")
-    else:
-        print(f"\n Le joueur {vainqueur} à gagner !\n")
+    print(f"\n Le joueur {vainqueur} à gagner !\n")
    
 
 
